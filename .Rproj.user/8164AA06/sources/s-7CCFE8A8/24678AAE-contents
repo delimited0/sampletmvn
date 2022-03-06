@@ -1,0 +1,53 @@
+source("poly_orthant_tools.R")
+
+seed <- 2020
+reps <- 28
+threads <- 28
+dims <- c(10, 30, 50, 100, 200, 300, 400, 500)
+# dims <- c(2, 5, 10)
+
+muf <- function(d) rep(0, d)
+Sigmaf <- function(d) diag(d)
+lbf <- function(d) rep(-Inf, 2*d)
+ubf <- function(d) c(0, rep(2, 2*d-1))
+Af <- function(d) {
+  lower_bounds <- -diag(d)
+  upper_bounds <- diag(d)
+  upper_bounds[1, ] <- c(2, 1, rep(0, d-2))
+  A <- rbind(upper_bounds, lower_bounds)
+  return(A)
+}
+
+settings <- 
+  rbind(
+    data.table(method_name = "EP",
+               prob_call = prob_poly_epmgp,
+               parameters = list(list(NULL)),
+               dimensions = list(dims)),
+    data.table(method_name = "SOV",
+               prob_call = prob_poly_mvtnormgb,
+               parameters = list(list(p=NULL)),
+               dimensions = list(dims)),
+    data.table(method_name = "HMC-NCE",
+               prob_call = poly_nce_factory(sample_poly_hmc, function(d) rep(-.8, d)),
+               parameters = list(list(n_samples = 100, n_noise = 1000,
+                                      burnin = 100)),
+               dimensions = list(dims)),
+    data.table(method_name = "NVMIX",
+               prob_call = prob_poly_nvmix,
+               parameters = list(list(standardized = FALSE)),
+               dimensions = list(dims)),
+    data.table(method_name = "LCG",
+               prob_call = prob_poly_lcg,
+               parameters = list(list(n_sub_samples = 100, n_sub_skip = 10,
+                                      n_hdr_samples = 100, n_hdr_skip = 10,
+                                      domain_fraction = 0.1)),
+               dimensions = list(dims))
+  )
+
+savepath = "data/prob_trapezoid"
+
+run_rep_parallel_benchmarks(settings, reps, muf, Sigmaf, lbf, ubf, Af, 
+                            threads = threads, seed = seed, savepath = savepath)
+
+

@@ -1,0 +1,391 @@
+library(data.table)
+library(tictoc)
+library(foreach)
+library(doFuture)
+library(doRNG)
+library(progressr)
+
+marginal_ks <- function(samples, mu, Sigma, lb, ub) {
+  d <- length(mu)
+  ks <- rep(NA, d)
+  for (k in 1:d) {
+    m <- mu[k]
+    s <- sqrt(Sigma[k, k])
+    a <- lb[k]
+    b <- ub[k]
+    alp = (a - m) / s
+    bet = (b - m) / s
+    marginal_mean <-
+      mu + m + s * (dnorm(alp) - dnorm(bet)) / (pnorm(bet) - pnorm(alp)) 
+    marginal_sd <- 
+      s^2 * (1 + 
+               ((alp * dnorm(alp) - bet * dnorm(bet)) / (pnorm(bet) - pnorm(alp))) -
+               ((dnorm(alp) - dnorm(bet)) / (pnorm(bet) - pnorm(alp)))^2
+      )
+    ks[k] <- ks.test(samples[, k], truncnorm::ptruncnorm, 
+                     a = lb[k], b = ub[k], mean = marginal_mean, 
+                     sd = marginal_sd)$statistic
+    ks[k] <- ks.test(samples[, k], truncnorm::ptruncnorm,
+                     a = lb[k], b = ub[k], 
+                     mean = mu[k], sd = sqrt(Sigma[k, k]))$statistic
+  }
+  return(ks)
+}
+
+bench <- function(method, method_name, params, n, mu, Sigma, lb, ub, initial,
+                  ks = NULL, mean_est = NULL, coda_ess = NULL) {
+  
+  # mu <- muf(d)
+  # Sigma <- Sigmaf(d)
+  # lb <- lbf(d)
+  # ub <- ubf(d)
+  
+  d <- length(mu)
+  
+  lbtag <- lb
+  ubtag <- ub
+  if (all(lb == lb[1])) lbtag <- lb[1]
+  if (all(ub == ub[1])) ubtag <- ub[1]
+  
+  if (!is.null(ks) | !is.null(coda_ess)) {
+    dimension <- 1:d 
+  }
+  else {
+    dimension <- NULL
+  }
+  
+  tic()
+  samples <- method(n, mu = mu, Sigma = Sigma, lb = lb, ub = ub, initial = initial,
+                    params = params)
+  runtime <- toc()
+  
+  dim_means = NULL
+  if (!is.null(ks)) {
+    ks <- marginal_ks(samples, mu, Sigma, lb, ub)
+  }
+  if (!is.null(coda_ess)) {
+    coda_ess <- coda::effectiveSize(samples)
+  }
+  if (!is.null(mean_est)) {
+    dim_means <- colMeans(samples)
+  }
+  
+  bench <- data.table(method = method_name,
+                      runtime = runtime$toc - runtime$tic,
+                      ks = ks, coda_ess = coda_ess, 
+                      n = n, d = d, dim = dimension, 
+                      mean = dim_means, lb = lbtag, ub = ubtag,
+                      as.data.table(params))
+  
+  return(bench)
+}
+
+# method parallel ----
+
+#' @method_threads number of methods to evaluate in parallel
+#' @blas_threads number of threads to use for linear algebra per method
+run_parallel_benchmarks <- function(settings, n, dimensions,
+                                    muf, Sigmaf, lbf, ubf, initialf,
+                                    ks = NULL, coda_ess = NULL, mean_est = NULL,
+                                    method_threads = 1, savepath = "", seed = 1,
+                                    blas_threads = 1) {
+  setDTthreads(1)
+  RhpcBLASctl::blas_set_num_threads(blas_threads)
+  registerDoFuture()
+  future::plan(future::multisession, workers = method_threads)
+  # future::plan(future::multicore, workers = threads)
+  
+  print(paste0("Running benchmarks with ", future::nbrOfWorkers(), " workers."))    
+  
+  N <- nrow(settings)
+  D <- length(dimensions)
+  
+  # rng <- RNGseq(N * D, 8)
+  progressr::with_progress({
+    p <- progressr::progressor(along = 1:(nrow(settings) * length(dimensions)))
+    
+    foreach(i = 1:nrow(settings), .inorder = FALSE) %dorng% {
+      
+    # for (i in 1:N) {
+      
+      for (d in dimensions) {
+        
+        registerDoRNG(seed)
+        
+        params <- settings$parameters[[i]]
+        method_name <- settings$method[i]
+        sample_call <- settings$sample_call[[i]]
+        
+        print(paste0("--- ", method_name, ", Dimension: ", d, "---"))
+        print(paste("Parameters: ", 
+                    paste(names(params), params, sep = "=", collapse = ", ")))
+        
+        mu <- muf(d)
+        Sigma <- Sigmaf(d)
+        lb <- lbf(d)
+        ub <- ubf(d)
+        initial <- initialf(d)
+        
+        result <- bench(sample_call, method_name, params, n, 
+                        mu, Sigma, lb, ub, initial,
+                        ks, mean_est, coda_ess)
+        
+        sim_time <- stringr::str_replace(Sys.time(), "\\s", "_")
+        filename <- paste0(method_name, "_",
+                           paste(names(params), params, sep = "=", collapse = "_"),
+                           "_d=", d, "_", sim_time, 
+                           "_seed:", seed, ".RDS")
+        print(paste0("Saving ", filename))
+        path <- paste0(savepath, "/", filename)
+        saveRDS(result, path)
+        p(sprintf("i=%g", i))
+      }
+    }
+  })
+}
+
+# repetition parallel ----
+
+run_rep_parallel_benchmarks <- function(settings, reps, n, dimensions,
+                                        muf, Sigmaf, lbf, ubf, initialf, 
+                                        ks = NULL, coda_ess = NULL, mean_est = NULL,
+                                        threads = 1, savepath = "", seed = 1) {
+  setDTthreads(1)
+  RhpcBLASctl::blas_set_num_threads(1)
+  registerDoFuture()
+  future::plan(future::multisession, workers = threads)
+  # future::plan(future::multicore, workers = threads)
+  
+  print(paste0("Running benchmarks with ", future::nbrOfWorkers(), " workers."))    
+  
+  for (i in 1:nrow(settings)) {
+    params <- settings$parameters[[i]]
+    method_name <- settings$method[i]
+    sample_call <- settings$sample_call[[i]]
+    
+    for (d in dimensions) {
+      
+      registerDoRNG(seed)
+      
+      print(paste0("--- ", method_name, ", Dimension: ", d, "---"))
+      print(paste("Parameters: ", 
+                  paste(names(params), params, sep = "=", collapse = ", ")))
+      
+      progressr::with_progress({
+        p <- progressr::progressor(along = 1:reps)
+        
+        method_bench <- foreach (j = 1:reps, .combine = 'rbind', 
+                                  .inorder = FALSE) %dorng% {
+          p(sprintf("j=%g", j))
+                                    
+          mu <- muf(d)
+          Sigma <- Sigmaf(d)
+          lb <- lbf(d)
+          ub <- ubf(d)
+          initial <- initialf(d)
+          
+          result <- bench(sample_call, method_name, params, n, 
+                          mu, Sigma, lb, ub, initial,
+                          ks, mean_est, coda_ess)  
+          
+          result[, rep := j]
+        }
+      })
+      
+      sim_time <- stringr::str_replace(Sys.time(), "\\s", "_")
+      filename <- paste0(method_name, "_",
+                         paste(names(params), params, sep = "=", collapse = "_"),
+                         "_d=", d, "_", sim_time, 
+                         "_seed:", seed, ".RDS")
+      print(paste0("Saving ", filename))
+      path <- paste0(savepath, "/", filename)
+      saveRDS(method_bench, path)
+    }
+  }
+}
+
+# sampling methods ----
+
+sample_geweke <- function(n, mu, Sigma, lb, ub, initial, params) {
+  tmvtnorm::rtmvnorm(n, mu, Sigma, lb, ub, algorithm = "gibbs",
+                     burn.in.samples = params$burnin, start.value = initial)
+}
+
+sample_met <- function(n, mu, Sigma, lb, ub, initial, params) {
+  return(TruncatedNormal::rtmvnorm(n, mu, Sigma, lb, ub))
+}
+
+sample_rhmc <- function(n, mu, Sigma, lb, ub, initial, params) {
+  truncmvnorm::rhmc_rtmvn(n, mu, Sigma, lb, ub, 
+                          traj_length = params$traj_length,
+                          cov_type = params$cov_type, 
+                          initial = initial)
+}
+
+sample_exact <- function(n, mu, Sigma, lb, ub, initial, params) {
+  cdists::rtmvn(n, Sigma, mu, lb, ub)
+}
+
+sample_hmc <- function(n, mu, Sigma, lb, ub, initial, params) {
+  d <- length(mu)
+  Prec <- chol2inv(chol(Sigma))
+  r <- as.vector(Prec %*% mu)
+  inf_idx <- c(is.infinite(lb), is.infinite(ub))
+  f <- rbind(diag(d), -diag(d))[!inf_idx, , drop = FALSE]
+  g <- c(-lb, ub)[!inf_idx]
+  tmg::rtmg(n, Prec, r, initial, f, g, burn.in = params$burnin)
+}
+
+sample_ess <- function(n, mu, Sigma, lb, ub, initial, params) {
+  lincongauss::rtmvn(n, mu, Sigma, lb, ub, initial)
+}
+
+sample_tgs <- function(n, mu, Sigma, lb, ub, initial, params) {
+  truncmvnorm::tgs_rtmvn(n, mu, Sigma, lb, ub, init = initial,
+                         beta = .5, burnin = params$burnin)
+}
+
+sample_ghk <- function(n, mu, Sigma, lb, ub, initial, params) {
+  result <- tmvnsim::tmvnsim(n, k = length(mu), lower = lb, upper = ub, 
+                             means = mu, sigma = Sigma)
+  samples <- result$samp
+  weights <- result$wts
+  idx <- sample(1:nrow(samples), size = n, replace = TRUE, prob = weights)
+  return(samples[idx, ])
+}
+
+sample_lg2015 <- function(n, mu, Sigma, lb, ub, initial, params) {
+  tmvmixnorm::rtmvn(n, mu, Sigma, lower = lb, upper = ub, 
+                    int = initial, burn = params$burnin)
+}
+
+sample_rsm <- function(n, mu, Sigma, lb, ub, initial, params) {
+  tmg_par <- list(mu = mu, Sigma = Sigma, lb = lb, ub = ub)
+  class(tmg_par) <- "RSM"
+  t(lineqGPR::tmvrnorm(tmg_par, nsim = n))
+}
+
+sample_ben2016 <- function(n, mu, Sigma, lb, ub, initial, params) {
+  d <- length(mu)
+  U <- chol(Sigma)
+  constr <- restrictedMVN::thresh2constraints(d, lower = lb, upper = ub)
+  offset <- constr$offset
+  linear_part <- constr$linear_part
+  restrictedMVN::sample_from_constraints(linear_part, offset,
+                                         mu, Sigma,
+                                         initial_point = initial,
+                                         ndraw = n, burnin = params$burnin)
+}
+
+sample_vaidya <- function(n, mu, Sigma, lb, ub, initial, params) {
+  gausspolytopewalk::rtmvn(n, mu, Sigma, lb, ub, method = "vaidya", 
+                           r = params$radius, initial = initial,
+                           lazy = params$lazy, burnin = params$burnin)
+}
+
+sample_john <- function(n, mu, Sigma, lb, ub, initial, params) {
+  gausspolytopewalk::rtmvn(n, mu, Sigma, lb, ub, method = "john", 
+                           r = params$radius, initial = initial,
+                           lazy = params$lazy, burnin = params$burnin)
+}
+
+sample_epess <- function(n, mu, Sigma, lb, ub, initial, params) {
+  epmgp::rtmvn(n, mu, Sigma, lb, ub, initial = initial)
+}
+
+sample_volesti <- function(n, mu, Sigma, lb, ub, initial, params) {
+  d <- length(mu)
+  L <- t(chol(Sigma))
+  inf_idx <- c(is.infinite(lb), is.infinite(ub))
+  A <- rbind(-diag(d), diag(d))[!inf_idx, ]
+  A <- A %*% L
+  b <- c(mu - lb, -mu + ub)[!inf_idx]
+  
+  P = volesti::Hpolytope$new(A,b)
+  samples <- volesti::sample_points(P, n = n, 
+                                    distribution = list(density = "gaussian", variance = 1),
+                                    random_walk = list(walk = params$walk, burns = params$burnin, 
+                                                       walk_length = params$walk_length,
+                                                       starting_point = initial,
+                                                       BaW_rad = params$radius)
+  )
+  t(samples) %*% t(L) + matrix(rep(mu, n), nrow = n, byrow = TRUE)
+}
+
+# bounded region only sampling methods ----
+
+sample_ry2004 <- function(n, mu, Sigma, lb, ub, initial, params) {
+  Prec <- chol2inv(chol(Sigma))
+  sampler <- mcmcsae::create_TMVN_sampler(Q = Prec, mu = mu, 
+                                          S = diag(length(mu)),
+                                          lower = lb, upper = ub,
+                                          method = "Gibbs")
+  result <- mcmcsae::MCMCsim(sampler, verbose = FALSE, n.chain = 1, n.cores = 1,
+                             burnin = params$burnin,
+                             start = list(list(initial)))
+  result$x[[1]]
+}
+
+sample_stmvn <- function(n, mu, Sigma, lb, ub, initial, params) {
+  Prec <- chol2inv(chol(Sigma))
+  sampler <- mcmcsae::create_TMVN_sampler(Q = Prec, mu = mu,
+                                          S = diag(length(mu)),
+                                          lower = lb, upper = ub,
+                                          method = "softTMVN",
+                                          sharpness = params$sharpness)
+  result <- mcmcsae::MCMCsim(sampler, verbose = FALSE, n.chain = 1, n.cores = 1,
+                             burnin = params$burnin, 
+                             start = list(list(initial)))
+  result$x[[1]]
+}
+
+
+
+# testing methods ----
+# minimal 
+# d <- 10
+# mu <- rep(0, d)
+# Sigma <- .5 * diag(d) + .5 * rep(1, d) %*% t(rep(1, d))
+# lb <- rep(-1, d)
+# ub <- rep(2, d)
+# n <- 1000
+# 
+# X <- sample_geweke(n, mu, Sigma, lb, ub, list(burnin = 100))
+# plot(X)
+# 
+# X <- sample_met(n, mu, Sigma, lb, ub) 
+# plot(X)
+# 
+# X <- sample_rhmc(n, mu, Sigma, lb, ub, list(traj_length = 2, cov_type = "full"))
+# plot(X)
+# 
+# X <- sample_exact(n, mu, Sigma, lb, ub, NULL)
+# plot(X)
+# 
+# X <- sample_hmc(n, mu, Sigma, lb, ub, list(burnin = 100))
+# plot(X)
+# 
+# X <- sample_ess(n, mu, Sigma, lb, ub, NULL)
+# plot(X)
+# 
+# X <- sample_tgs(n, mu, Sigma, lb, ub, list(burnin = 100))
+# plot(X)
+# 
+# X <- sample_ghk(n, mu, Sigma, lb, ub)
+# plot(X)
+# 
+# X <- sample_lg2015(n, mu, Sigma, lb, ub, list(burnin = 100))
+# plot(X)
+# 
+# X <- sample_rsm(n, mu, Sigma, lb, ub)
+# plot(X)
+# 
+# X <- sample_ry2004(n, mu, Sigma, lb, ub, list(burnin = 100, initial = rep(0, d)))
+# plot(X)
+# 
+# X <- sample_stmvn(n, mu, Sigma, lb, ub, list(burnin = 100, sharpness = 10))
+# plot(X)
+# 
+# X <- sample_ben2016(n, mu, Sigma, lb, ub, list(burnin = 100))
+# plot(X)
+

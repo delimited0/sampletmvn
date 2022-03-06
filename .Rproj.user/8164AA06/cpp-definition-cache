@@ -1,0 +1,146 @@
+[
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+        "file_last_write": 1646587203.0,
+        "definitions": [
+            {
+                "usr": "c:@F@unif_rej#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "unif_rej(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 10,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@norm_rej#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "norm_rej(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 34,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@halfnorm_rej#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "halfnorm_rej(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 45,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@exp_rej#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "exp_rej(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 54,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@rtuvn_case1#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rtuvn_case1(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 75,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@rtuvn_case2#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rtuvn_case2(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 92,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@rtuvn_case3#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rtuvn_case3(double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 104,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@rtuvn#I#d#d#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rtuvn(int, double, double, double, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 135,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@gibbs_mixed_rejection#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "gibbs_mixed_rejection(int, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
+                "line": 174,
+                "column": 11
+            }
+        ]
+    },
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rcpparma_hello_world.cpp",
+        "file_last_write": 1646242551.0,
+        "definitions": [
+            {
+                "usr": "c:@F@rcpparma_hello_world#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rcpparma_hello_world",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rcpparma_hello_world.cpp",
+                "line": 18,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@rcpparma_outerproduct#&1$@N@arma@S@Col>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rcpparma_outerproduct(const arma::colvec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rcpparma_hello_world.cpp",
+                "line": 30,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@rcpparma_innerproduct#&1$@N@arma@S@Col>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rcpparma_innerproduct(const arma::colvec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rcpparma_hello_world.cpp",
+                "line": 38,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@rcpparma_bothproducts#&1$@N@arma@S@Col>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rcpparma_bothproducts(const arma::colvec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rcpparma_hello_world.cpp",
+                "line": 47,
+                "column": 12
+            }
+        ]
+    },
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rsm.cpp",
+        "file_last_write": 1646282080.0,
+        "definitions": [
+            {
+                "usr": "c:@F@rsm#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#S1_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rsm(int, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec, arma::mat)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rsm.cpp",
+                "line": 5,
+                "column": 11
+            }
+        ]
+    }
+]
