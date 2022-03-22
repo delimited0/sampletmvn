@@ -11,24 +11,9 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rtuvn
-arma::vec rtuvn(int n, double mean, double sd, double lower, double upper);
-RcppExport SEXP _sampletmvn_rtuvn(SEXP nSEXP, SEXP meanSEXP, SEXP sdSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type mean(meanSEXP);
-    Rcpp::traits::input_parameter< double >::type sd(sdSEXP);
-    Rcpp::traits::input_parameter< double >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< double >::type upper(upperSEXP);
-    rcpp_result_gen = Rcpp::wrap(rtuvn(n, mean, sd, lower, upper));
-    return rcpp_result_gen;
-END_RCPP
-}
-// gibbs_mixed_rejection
-arma::mat gibbs_mixed_rejection(int n, arma::vec z, arma::mat R, arma::vec Rz, arma::vec a, arma::vec b);
-RcppExport SEXP _sampletmvn_gibbs_mixed_rejection(SEXP nSEXP, SEXP zSEXP, SEXP RSEXP, SEXP RzSEXP, SEXP aSEXP, SEXP bSEXP) {
+// lg2015_gibbs_iter_lg2015
+arma::mat lg2015_gibbs_iter_lg2015(int n, arma::vec z, arma::mat R, arma::vec Rz, arma::vec a, arma::vec b);
+RcppExport SEXP _sampletmvn_lg2015_gibbs_iter_lg2015(SEXP nSEXP, SEXP zSEXP, SEXP RSEXP, SEXP RzSEXP, SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,50 +23,41 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type Rz(RzSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(gibbs_mixed_rejection(n, z, R, Rz, a, b));
+    rcpp_result_gen = Rcpp::wrap(lg2015_gibbs_iter_lg2015(n, z, R, Rz, a, b));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_hello_world
-arma::mat rcpparma_hello_world();
-RcppExport SEXP _sampletmvn_rcpparma_hello_world() {
+// lg2015_gibbs_iter_be2017
+arma::mat lg2015_gibbs_iter_be2017(int n, arma::vec z, arma::mat R, arma::vec Rz, arma::vec a, arma::vec b);
+RcppExport SEXP _sampletmvn_lg2015_gibbs_iter_be2017(SEXP nSEXP, SEXP zSEXP, SEXP RSEXP, SEXP RzSEXP, SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpparma_hello_world());
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Rz(RzSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(lg2015_gibbs_iter_be2017(n, z, R, Rz, a, b));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_outerproduct
-arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP _sampletmvn_rcpparma_outerproduct(SEXP xSEXP) {
+// hamiltonian_zigzag
+arma::mat hamiltonian_zigzag(int n, arma::mat Prec, arma::mat A, arma::vec lb, arma::vec ub, arma::vec init, arma::vec p_init, double T);
+RcppExport SEXP _sampletmvn_hamiltonian_zigzag(SEXP nSEXP, SEXP PrecSEXP, SEXP ASEXP, SEXP lbSEXP, SEXP ubSEXP, SEXP initSEXP, SEXP p_initSEXP, SEXP TSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_outerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_innerproduct
-double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP _sampletmvn_rcpparma_innerproduct(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_innerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_bothproducts
-Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP _sampletmvn_rcpparma_bothproducts(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_bothproducts(x));
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Prec(PrecSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lb(lbSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ub(ubSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type init(initSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type p_init(p_initSEXP);
+    Rcpp::traits::input_parameter< double >::type T(TSEXP);
+    rcpp_result_gen = Rcpp::wrap(hamiltonian_zigzag(n, Prec, A, lb, ub, init, p_init, T));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -102,15 +78,64 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ry2004_gibbs_iter_lg2015
+arma::mat ry2004_gibbs_iter_lg2015(int n, arma::vec alpha, arma::vec z, arma::mat D, arma::vec Dz, arma::vec lb, arma::vec ub);
+RcppExport SEXP _sampletmvn_ry2004_gibbs_iter_lg2015(SEXP nSEXP, SEXP alphaSEXP, SEXP zSEXP, SEXP DSEXP, SEXP DzSEXP, SEXP lbSEXP, SEXP ubSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type D(DSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Dz(DzSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lb(lbSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ub(ubSEXP);
+    rcpp_result_gen = Rcpp::wrap(ry2004_gibbs_iter_lg2015(n, alpha, z, D, Dz, lb, ub));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ry2004_gibbs_iter_be2017
+arma::mat ry2004_gibbs_iter_be2017(int n, arma::vec alpha, arma::vec z, arma::mat D, arma::vec Dz, arma::vec lb, arma::vec ub);
+RcppExport SEXP _sampletmvn_ry2004_gibbs_iter_be2017(SEXP nSEXP, SEXP alphaSEXP, SEXP zSEXP, SEXP DSEXP, SEXP DzSEXP, SEXP lbSEXP, SEXP ubSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type D(DSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Dz(DzSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lb(lbSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ub(ubSEXP);
+    rcpp_result_gen = Rcpp::wrap(ry2004_gibbs_iter_be2017(n, alpha, z, D, Dz, lb, ub));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rtuvn
+arma::vec rtuvn(int n, double mean, double sd, double lower, double upper);
+RcppExport SEXP _sampletmvn_rtuvn(SEXP nSEXP, SEXP meanSEXP, SEXP sdSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< double >::type sd(sdSEXP);
+    Rcpp::traits::input_parameter< double >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< double >::type upper(upperSEXP);
+    rcpp_result_gen = Rcpp::wrap(rtuvn(n, mean, sd, lower, upper));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_sampletmvn_rtuvn", (DL_FUNC) &_sampletmvn_rtuvn, 5},
-    {"_sampletmvn_gibbs_mixed_rejection", (DL_FUNC) &_sampletmvn_gibbs_mixed_rejection, 6},
-    {"_sampletmvn_rcpparma_hello_world", (DL_FUNC) &_sampletmvn_rcpparma_hello_world, 0},
-    {"_sampletmvn_rcpparma_outerproduct", (DL_FUNC) &_sampletmvn_rcpparma_outerproduct, 1},
-    {"_sampletmvn_rcpparma_innerproduct", (DL_FUNC) &_sampletmvn_rcpparma_innerproduct, 1},
-    {"_sampletmvn_rcpparma_bothproducts", (DL_FUNC) &_sampletmvn_rcpparma_bothproducts, 1},
+    {"_sampletmvn_lg2015_gibbs_iter_lg2015", (DL_FUNC) &_sampletmvn_lg2015_gibbs_iter_lg2015, 6},
+    {"_sampletmvn_lg2015_gibbs_iter_be2017", (DL_FUNC) &_sampletmvn_lg2015_gibbs_iter_be2017, 6},
+    {"_sampletmvn_hamiltonian_zigzag", (DL_FUNC) &_sampletmvn_hamiltonian_zigzag, 8},
     {"_sampletmvn_rsm", (DL_FUNC) &_sampletmvn_rsm, 7},
+    {"_sampletmvn_ry2004_gibbs_iter_lg2015", (DL_FUNC) &_sampletmvn_ry2004_gibbs_iter_lg2015, 7},
+    {"_sampletmvn_ry2004_gibbs_iter_be2017", (DL_FUNC) &_sampletmvn_ry2004_gibbs_iter_be2017, 7},
+    {"_sampletmvn_rtuvn", (DL_FUNC) &_sampletmvn_rtuvn, 5},
     {NULL, NULL, 0}
 };
 

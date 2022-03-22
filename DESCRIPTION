@@ -1,13 +1,12 @@
 Package: sampletmvn
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Sample from truncated multivariate normal
+Version: 0.1.0
 Date: 2022-03-02
-Author: Who wrote it
+Author: Patrick Ding
 Maintainer: Who to complain to
-     <yourfault@somewhere.net>
-Description: More about what it does (maybe
-     more than one line)
-License: What license is it under?
+     <patrickding00@gmail.com>
+Description: C++ implementations of truncated multivariate normal samplers. 
+License: `use_mit_license()`
 Imports: Rcpp (>= 1.0.8)
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, BH

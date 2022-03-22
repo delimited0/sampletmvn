@@ -29,9 +29,9 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
 #' @param thin thinning lag (default as \code{1}).
 #' 
 #' @export
-sample_gibbs_mixed_rejection <- 
+sample_gibbs_lg2015 <- 
   function(n, Mean, Sigma, D = diag(1, length(Mean)), lower, upper, 
-           init=NULL, burn=10, thin=1) {
+           init=NULL, burn=10, thin=1, tuvn_sampler = "lg2015") {
   
   if (length(Mean) == 1) {
     result <- rtuvn(n=n, mean=Mean, sd=c(Sigma), lower=lower, upper=upper)
@@ -77,14 +77,79 @@ sample_gibbs_mixed_rejection <-
     
     # draw standardized samples
     total_samples = (thin+1)*n + burn
-    samples = gibbs_mixed_rejection(total_samples, z, R, Rz, a, b)
+    
+    if (tuvn_sampler == "lg2015")
+      samples = lg2015_gibbs_iter_lg2015(total_samples, z, R, Rz, a, b)
+    else if (tuvn_sampler == "be2017")
+      samples = lg2015_gibbs_iter_be2017(total_samples, z, R, Rz, a, b)
+    else
+      stop("Invalid truncated univariate normal sampler")
+    
     
     final.ind <- 1:total_samples
     final.ind <- final.ind[(burn+1):length(final.ind)]
     final.ind <- seq(1,length(final.ind),by=thin+1) + thin + burn
     
+    # unstandardize
     samples <- Sigma.chol %*% samples[, final.ind] + Mean
   }
   
   return(t(samples))
+}
+
+#' @param n number of random samples desired (sample size).
+#' @param mu mean vector of the underlying multivariate normal distribution.
+#' @param Sigma positive definite covariance matrix of the underlying multivariate normal distribution.
+#' @param lb vector of lower bounds for truncation.
+#' @param ub vector of upper bounds for truncation.
+#' @param A matrix or vector of coefficients of linear inequality constraints.
+#' @param init initial value vector for Gibbs sampler (satisfying truncation), if \code{NULL} then determine automatically.
+#' @param burn burn-in iterations discarded (default as \code{10}).
+#' @param thin thinning lag (default as \code{1}).
+#' @export
+sample_gibbs_ry2004 = function(n, mu, Sigma, A, lb, ub,
+                               init = NULL, burn = 10, thin = 1, 
+                               tuvn_sampler = "lg2015") {
+
+  if (is.null(init)) {
+    A_inv <- MASS::ginv(A)
+    init <- D_inv %*% (lb + ub) / 2  
+  }
+  
+  L = t(chol(Sigma))
+  D = A %*% L
+  alpha = solve(L, mu)
+  
+  z = solve(L, init - mu)
+  Dz = D %*% z
+  
+  total_samples = (thin+1)*n + burn
+  
+  if (tuvn_sampler == "lg2015")
+    samples = ry2004_gibbs_iter_lg2015(total_samples, alpha, z, D, Dz, lb, ub)
+  else if (tuvn_sampler == "be2017")
+    samples = ry2004_gibbs_iter_be2017(total_samples, alpha, z, D, Dz, lb, ub)
+  else 
+    stop("Invalid truncated univariate normal sampler")
+  
+  final.ind <- 1:total_samples
+  final.ind <- final.ind[(burn+1):length(final.ind)]
+  final.ind <- seq(1, length(final.ind), by=thin+1) + thin + burn
+  
+  # unstandardize
+  samples <- L %*% samples[, final.ind] + mu
+  
+  return(t(samples))
+}
+
+#' @export
+sample_hamiltonian_zigzag = function(n, mu, Sigma, lb, ub, A, 
+                                     intg_time, init = NULL, p_init = NULL) {
+  d = length(mu)
+  Prec = chol2inv(chol(Sigma))
+  
+  # p_init = rnorm(d)
+  
+  samples = t(hamiltonian_zigzag(n, Prec, A, lb, ub, init, p_init, intg_time))
+  return(samples)
 }
