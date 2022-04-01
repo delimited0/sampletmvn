@@ -1,7 +1,7 @@
 
 
 # box test ----------------------------------------------------------------
-n = 10000
+n = 1
 
 d = 2
 mu = rep(0, d)
@@ -18,15 +18,15 @@ gibbs_mr_samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma, A, lb, ub,
                                                    tuvn_sampler = "lg2015")
 plot(gibbs_mr_samples)
 
-gibbs_mr_samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma, A, lb, ub, 
+lg2015_samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma,lb, ub, A, 
                                                    init = c(1, 1), thin = 0,
                                                    tuvn_sampler = "be2017")
-plot(gibbs_mr_samples)
+plot(lg2015_samples)
 
-gibbs_ry2004_samples = sampletmvn::sample_gibbs_ry2004(n, mu, Sigma, A, lb, ub,
+ry2004_samples = sampletmvn::sample_gibbs_ry2004(n, mu, Sigma, lb, ub, A,
                                                        init = c(1, 1), thin = 0,
-                                                       tuvn_sampler = "lg2015")
-plot(gibbs_ry2004_samples)
+                                                       tuvn_sampler = "be2017")
+plot(ry2004_samples)
 
 liness_samples = lincongauss::rtmvn(n, mu, Sigma, lb, ub, x_init = c(0, 0))
 plot(liness_samples)
@@ -37,7 +37,7 @@ plot(epess_samples)
 rhmc_samples = truncmvnorm::rhmc_rtmvn(n, mu, Sigma, lb, ub, initial = c(0, 0))
 plot(rhmc_samples)
 
-hzz_samples = sampletmvn::sample_hamiltonian_zigzag(1, mu, Sigma, lb, ub, A, 
+hzz_samples = sampletmvn::sample_hamiltonian_zigzag(2, mu, Sigma, lb, ub, A, 
                                                     intg_time = 2, init = c(1, 1))
 
 # positive orthant test --------------------------------------------------------
@@ -50,17 +50,20 @@ lb = rep(0, d)
 ub = rep(Inf, d)
 A = diag(d)
 
-rsm_samples = sampletmvn::sample_rsm(n, mu, Sigma, lb, ub, A)
+rsm_samples = sampletmvn::sample_rsm(n, mu, Sigma, lb, ub)
 plot(rsm_samples)
 
-gibbs_mr_samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma, A, lb, ub, 
-                                                   init = c(1, 1), thin = 0)
-plot(gibbs_mr_samples)
+lg2015_samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma, 
+                                                 lower = lb, upper = ub, 
+                                                 init = c(1, 1), thin = 0,
+                                                 tuvn_sampler = "be2017")
+plot(lg2015_samples)
 
-gibbs_ry2004_samples = sampletmvn::sample_gibbs_ry2004(n, mu, Sigma, A, lb, ub,
-                                                       init = c(1, 1), thin = 0,
-                                                       tuvn_sampler = "be2017")
-plot(gibbs_ry2004_samples)
+ry2004_samples = sampletmvn::sample_gibbs_ry2004(n, mu, Sigma, 
+                                                 lb, ub,
+                                                 init = c(1, 1), thin = 0,
+                                                 tuvn_sampler = "be2017")
+plot(ry2004_samples)
 
 hzz_samples = sampletmvn::sample_hamiltonian_zigzag(10, mu, Sigma, lb, ub, A, 
                                                     intg_time = 1, 
@@ -69,7 +72,7 @@ hzz_samples = sampletmvn::sample_hamiltonian_zigzag(10, mu, Sigma, lb, ub, A,
 # trapezoid test ----------------------------------------------------------
 n = 1000
 d = 2
-muf <- function(d) rep(0, d)
+muf <- function(d) rep(1, d)
 Sigmaf <- function(d) diag(d)
 lbf <- function(d) rep(-Inf, 2*d)
 ubf <- function(d) c(0, rep(2, 2*d-1))
@@ -90,7 +93,15 @@ A = Af(d)
 rsm_samples = sampletmvn::sample_rsm(n, mu, Sigma, lb, ub, A)
 plot(rsm_samples)
 
-gibbs_mr_samples = sampletmvn::sample_gibbs_mixed_rejection(n, mu, Sigma, A, lb, ub, 
-                                                            init = c(1, 1), thin = 0)
-plot(gibbs_mr_samples)
+lg2015_samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma, lb, ub, A,
+                                                 init = c(-1, -1), burn = 0,
+                                                 tuvn_sampler = "be2017")
+plot(lg2015_samples)
+
+ry2004_samples = sampletmvn::sample_gibbs_ry2004(n, mu, Sigma, lb, ub, A, 
+                                                 init = c(-1, -1), thin = 0,
+                                                 tuvn_sampler = "be2017")
+plot(ry2004_samples)
+
+
 

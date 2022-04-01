@@ -4,8 +4,17 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
   d = length(mu)
   Prec = chol2inv(chol(Sigma))
   
+  # find the mode of the truncated normal with quadratic programming
+  if (is.null(A)) {
+    Amat = diag(d)
+  }
+  else {
+    Amat = A
+  }
+  
+  # convert constraints to appropriate form for quadprog
   inf_idx = is.infinite(c(lb, ub))
-  Amat = - t(rbind(A, -A)[!inf_idx, ])
+  Amat = - t(rbind(Amat, -Amat)[!inf_idx, ])
   bvec = c(lb, -ub)[!inf_idx]
   dvec = rep(0, d)
   
@@ -14,7 +23,13 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
   
   Prec_mode = Prec %*% map
   
-  samples = rsm(n, map, Sigma, Prec_mode, lb, ub, A)
+  if (!is.null(A)) {
+    samples = rsm(n, map, Sigma, Prec_mode, lb, ub, A)  
+  }
+  else {
+    samples = rsm_axis(n, map, Sigma, Prec_mode, lb, ub)
+  }
+  
   return(t(samples))
 }
 
@@ -30,7 +45,7 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
 #' 
 #' @export
 sample_gibbs_lg2015 <- 
-  function(n, Mean, Sigma, D = diag(1, length(Mean)), lower, upper, 
+  function(n, Mean, Sigma, lower, upper, D = diag(1, length(Mean)),
            init=NULL, burn=10, thin=1, tuvn_sampler = "lg2015") {
   
   if (length(Mean) == 1) {
@@ -77,13 +92,7 @@ sample_gibbs_lg2015 <-
     
     # draw standardized samples
     total_samples = (thin+1)*n + burn
-    
-    if (tuvn_sampler == "lg2015")
-      samples = lg2015_gibbs_iter_lg2015(total_samples, z, R, Rz, a, b)
-    else if (tuvn_sampler == "be2017")
-      samples = lg2015_gibbs_iter_be2017(total_samples, z, R, Rz, a, b)
-    else
-      stop("Invalid truncated univariate normal sampler")
+    samples = lg2015(total_samples, z, R, Rz, a, b, tuvn_sampler)
     
     
     final.ind <- 1:total_samples
@@ -107,7 +116,7 @@ sample_gibbs_lg2015 <-
 #' @param burn burn-in iterations discarded (default as \code{10}).
 #' @param thin thinning lag (default as \code{1}).
 #' @export
-sample_gibbs_ry2004 = function(n, mu, Sigma, A, lb, ub,
+sample_gibbs_ry2004 = function(n, mu, Sigma, lb, ub, A = diag(1, length(mu)),
                                init = NULL, burn = 10, thin = 1, 
                                tuvn_sampler = "lg2015") {
 
@@ -120,17 +129,18 @@ sample_gibbs_ry2004 = function(n, mu, Sigma, A, lb, ub,
   D = A %*% L
   alpha = solve(L, mu)
   
-  z = solve(L, init - mu)
+  z = solve(L, init)
   Dz = D %*% z
   
   total_samples = (thin+1)*n + burn
+  samples = ry2004(total_samples, alpha, z, D, Dz, lb, ub, tuvn_sampler)
   
-  if (tuvn_sampler == "lg2015")
-    samples = ry2004_gibbs_iter_lg2015(total_samples, alpha, z, D, Dz, lb, ub)
-  else if (tuvn_sampler == "be2017")
-    samples = ry2004_gibbs_iter_be2017(total_samples, alpha, z, D, Dz, lb, ub)
-  else 
-    stop("Invalid truncated univariate normal sampler")
+  # if (tuvn_sampler == "lg2015")
+  #   samples = ry2004_gibbs_iter_lg2015(total_samples, alpha, z, D, Dz, lb, ub)
+  # else if (tuvn_sampler == "be2017")
+  #   samples = ry2004_gibbs_iter_be2017(total_samples, alpha, z, D, Dz, lb, ub)
+  # else 
+  #   stop("Invalid truncated univariate normal sampler")
   
   final.ind <- 1:total_samples
   final.ind <- final.ind[(burn+1):length(final.ind)]
@@ -149,6 +159,7 @@ sample_hamiltonian_zigzag = function(n, mu, Sigma, lb, ub, A,
   Prec = chol2inv(chol(Sigma))
   
   # p_init = rnorm(d)
+  p_init = init
   
   samples = t(hamiltonian_zigzag(n, Prec, A, lb, ub, init, p_init, intg_time))
   return(samples)

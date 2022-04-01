@@ -23,10 +23,10 @@ arma::mat hamiltonian_zigzag(int n, arma::mat Prec,
     Rcpp::Rcout << "v: " << v << std::endl;
     
     arma::vec Phix = Prec * x;
-    arma::vec Phiv = Prec * x;
+    arma::vec Phiv = Prec * v;
     
     int iter = 0;
-    while (tau < T && iter < 300) {
+    while (tau < T && iter < 1) {
       Rcpp::Rcout << "=======================" << std::endl;
       Rcpp::Rcout << "=======================" << std::endl;
       
@@ -91,6 +91,7 @@ arma::mat hamiltonian_zigzag(int n, arma::mat Prec,
       Rcpp::Rcout << "t_min: " << t_min << std::endl;
       
       if (tau + t_min > T) {
+        // no further event occurred
         x += (T - tau) * v;
         p = p - (T - tau) * Phix - std::pow(T - tau, 2.) * Phiv / 2.;
         tau = T;

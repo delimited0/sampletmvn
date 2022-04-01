@@ -202,6 +202,36 @@ double rtuvn_lg2015(double mean, double sd, double lower, double upper) {
   return sd * x + mean;
 }
 
+double LG2015Tuvn::rtuvn(const double mean, const double sd, 
+                         const double lower, const double upper) {
+  double x;
+  
+  double a = (lower - mean) / sd;
+  double b = (upper - mean) / sd;
+  
+  if (std::isinf(a) || std::isinf(b)) {
+    if (std::isinf(b)) {
+      x = rtuvn_case1(a, b);
+    }
+    else {
+      x = -rtuvn_case1(-b, -a);    
+    }
+  }
+  else {
+    if (a < 0 && b > 0) {
+      x = rtuvn_case2(a, b);
+    }
+    if (a >= 0) {
+      x = rtuvn_case3(a, b);
+    }
+    if (b <= 0) {
+      x = -rtuvn_case3(-b, -a);
+    }  
+  }
+  
+  return sd * x + mean;
+}
+
 /* Botev and L'ecuyer  */
 const double INV_THRESHOLD = 0.4;
 const double TOL = 2.05;
@@ -262,5 +292,36 @@ double rtuvn_be2017(double mean, double sd, double lower, double upper) {
     }
   }
   
+  return(x);
+}
+
+double BE2017Tuvn::rtuvn(const double mean, const double sd,
+                         const double lower, const double upper) {
+  double x;
+
+  double l = (lower - mean) / sd;
+  double u = (upper - mean) / sd;
+
+  // case 1: a < l < u
+  if (l > INV_THRESHOLD) {
+    x = ntail(l, u);
+  }
+
+  // case 2: l < u < -a
+  else if (u < -INV_THRESHOLD) {
+    x = -ntail(-u, -l);
+  }
+
+  else {
+    // case 3: abs(u - l) > tol
+    if (std::abs(u - l) > TOL) {
+      x = trnd(l, u);
+    }
+    // case 4: abs(u - l) < tol
+    else {
+      x = trninv(l, u);
+    }
+  }
+
   return(x);
 }

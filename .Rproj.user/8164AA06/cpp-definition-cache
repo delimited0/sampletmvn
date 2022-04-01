@@ -1,31 +1,7 @@
 [
     {
-        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
-        "file_last_write": 1647568603.0,
-        "definitions": [
-            {
-                "usr": "c:@F@lg2015_gibbs_iter_lg2015#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "lg2015_gibbs_iter_lg2015(int, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec)",
-                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
-                "line": 7,
-                "column": 11
-            },
-            {
-                "usr": "c:@F@lg2015_gibbs_iter_be2017#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "lg2015_gibbs_iter_be2017(int, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec)",
-                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/gser.cpp",
-                "line": 69,
-                "column": 11
-            }
-        ]
-    },
-    {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hzz.cpp",
-        "file_last_write": 1647200012.0,
+        "file_last_write": 1647994636.0,
         "definitions": [
             {
                 "usr": "c:@F@hamiltonian_zigzag#I#$@N@arma@S@Mat>#d#S0_#$@N@arma@S@Col>#d#S1_#S1_#S1_#d#",
@@ -39,8 +15,23 @@
         ]
     },
     {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/lg2015.cpp",
+        "file_last_write": 1648697242.0,
+        "definitions": [
+            {
+                "usr": "c:@F@lg2015#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#$@N@Rcpp@S@String#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "lg2015(int, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec, Rcpp::String)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/lg2015.cpp",
+                "line": 7,
+                "column": 11
+            }
+        ]
+    },
+    {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rsm.cpp",
-        "file_last_write": 1646282080.0,
+        "file_last_write": 1648580836.0,
         "definitions": [
             {
                 "usr": "c:@F@rsm#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#S1_#",
@@ -50,36 +41,36 @@
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rsm.cpp",
                 "line": 5,
                 "column": 11
+            },
+            {
+                "usr": "c:@F@rsm_axis#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rsm_axis(int, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rsm.cpp",
+                "line": 42,
+                "column": 11
             }
         ]
     },
     {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/ry2004.cpp",
-        "file_last_write": 1647583784.0,
+        "file_last_write": 1648750269.0,
         "definitions": [
             {
-                "usr": "c:@F@ry2004_gibbs_iter_lg2015#I#$@N@arma@S@Col>#d#S0_#$@N@arma@S@Mat>#d#S0_#S0_#S0_#",
+                "usr": "c:@F@ry2004#I#$@N@arma@S@Col>#d#S0_#$@N@arma@S@Mat>#d#S0_#S0_#S0_#$@N@Rcpp@S@String#",
                 "kind": 6,
                 "parent_name": "",
-                "name": "ry2004_gibbs_iter_lg2015(int, arma::vec, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec)",
+                "name": "ry2004(int, arma::vec, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec, Rcpp::String)",
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/ry2004.cpp",
                 "line": 7,
-                "column": 11
-            },
-            {
-                "usr": "c:@F@ry2004_gibbs_iter_be2017#I#$@N@arma@S@Col>#d#S0_#$@N@arma@S@Mat>#d#S0_#S0_#S0_#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "ry2004_gibbs_iter_be2017(int, arma::vec, arma::vec, arma::mat, arma::vec, arma::vec, arma::vec)",
-                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/ry2004.cpp",
-                "line": 43,
                 "column": 11
             }
         ]
     },
     {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
-        "file_last_write": 1647574871.0,
+        "file_last_write": 1648658968.0,
         "definitions": [
             {
                 "usr": "c:@F@unif_rej#d#d#",
@@ -163,12 +154,21 @@
                 "column": 8
             },
             {
+                "usr": "c:@S@LG2015Tuvn@F@rtuvn#1d#1d#1d#1d#",
+                "kind": 7,
+                "parent_name": "LG2015Tuvn",
+                "name": "rtuvn(const double, const double, const double, const double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
+                "line": 205,
+                "column": 20
+            },
+            {
                 "usr": "c:@F@ntail#1d#1d#",
                 "kind": 6,
                 "parent_name": "",
                 "name": "ntail(const double, const double)",
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
-                "line": 209,
+                "line": 239,
                 "column": 8
             },
             {
@@ -177,7 +177,7 @@
                 "parent_name": "",
                 "name": "trnd(const double, const double)",
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
-                "line": 220,
+                "line": 250,
                 "column": 8
             },
             {
@@ -186,7 +186,7 @@
                 "parent_name": "",
                 "name": "trninv(const double, const double)",
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
-                "line": 229,
+                "line": 259,
                 "column": 8
             },
             {
@@ -195,14 +195,51 @@
                 "parent_name": "",
                 "name": "rtuvn_be2017(double, double, double, double)",
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
-                "line": 238,
+                "line": 268,
                 "column": 8
+            },
+            {
+                "usr": "c:@S@BE2017Tuvn@F@rtuvn#1d#1d#1d#1d#",
+                "kind": 7,
+                "parent_name": "BE2017Tuvn",
+                "name": "rtuvn(const double, const double, const double, const double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.cpp",
+                "line": 298,
+                "column": 20
             }
         ]
     },
     {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.h",
-        "file_last_write": 1647557183.0,
-        "definitions": []
+        "file_last_write": 1648671211.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Tuvn",
+                "kind": 2,
+                "parent_name": "",
+                "name": "Tuvn",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.h",
+                "line": 4,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@LG2015Tuvn",
+                "kind": 2,
+                "parent_name": "",
+                "name": "LG2015Tuvn",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.h",
+                "line": 12,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@BE2017Tuvn",
+                "kind": 2,
+                "parent_name": "",
+                "name": "BE2017Tuvn",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/tuvn.h",
+                "line": 20,
+                "column": 7
+            }
+        ]
     }
 ]

@@ -4,10 +4,11 @@
 #include "tuvn.h"
 
 // [[Rcpp::export]]
-arma::mat ry2004(int n, arma::vec alpha, arma::vec z, 
-                                   arma::mat D, arma::vec Dz, 
-                                   arma::vec lb, arma::vec ub,
+arma::mat lg2015(int n, arma::vec z, 
+                                   arma::mat R, arma::vec Rz, 
+                                   arma::vec a, arma::vec b, 
                                    Rcpp::String sampler) {
+  
   
   std::unique_ptr<Tuvn> tuvn;
   if (sampler == "be2017") {
@@ -17,37 +18,37 @@ arma::mat ry2004(int n, arma::vec alpha, arma::vec z,
     tuvn = std::unique_ptr<Tuvn>(new LG2015Tuvn);
   }
   
-  int p = z.n_elem;
-  
-  arma::mat samples(p, n);
-  arma::vec Dj;
+  int p = R.n_cols;
   
   double lower_pos;
   double upper_pos;
   double lower_neg;
   double upper_neg;
   
+  arma::mat samples(p, n);
+  arma::vec Rj;
+  
   for (int i = 0; i < n; i++) {
     
     for (int j = 0; j < p; j++) {
       
-      Dj = D.col(j);
+      Rj = R.col(j);
       
-      arma::vec Dz_notj = Dz - (Dj * z(j));
+      arma::vec Rz_notj = Rz - ( Rj * z(j) );
       
-      arma::vec a = (lb - Dz_notj);
-      arma::vec b = (ub - Dz_notj);
+      arma::vec a_temp = a - Rz_notj;
+      arma::vec b_temp = b - Rz_notj;
       
-      arma::uvec pos = arma::find(Dj > 0.);
-      arma::uvec neg = arma::find(Dj < 0.);
+      arma::uvec pos = arma::find(Rj > 0);
+      arma::uvec neg = arma::find(Rj < 0);
       
       if (pos.n_elem == 0) {
         lower_pos = -arma::datum::inf;
         upper_pos = arma::datum::inf;
       }
       else {
-        lower_pos = arma::max(a(pos) / Dj(pos));
-        upper_pos = arma::min(b(pos) / Dj(pos));
+        lower_pos = arma::max(a_temp(pos) / Rj(pos));
+        upper_pos = arma::min(b_temp(pos) / Rj(pos));
       }
       
       if (neg.n_elem == 0) {
@@ -55,19 +56,19 @@ arma::mat ry2004(int n, arma::vec alpha, arma::vec z,
         lower_neg = -arma::datum::inf;
       } 
       else {
-        upper_neg = arma::min(a(neg) / Dj(neg));
-        lower_neg = arma::max(b(neg) / Dj(neg));
+        upper_neg = arma::min(a_temp(neg) / Rj(neg));
+        lower_neg = arma::max(b_temp(neg) / Rj(neg));
       }
       
       double lower_j = std::max(lower_pos, lower_neg);
       double upper_j = std::min(upper_pos, upper_neg);
       
       double zj_old = z(j);
-      z(j) = tuvn->rtuvn(alpha(j), 1., lower_j, upper_j);
+      z(j) = tuvn->rtuvn(0., 1., lower_j, upper_j);
       
-      Dz += Dj * (z(j) - zj_old);
+      Rz += R.col(j) * (z(j) - zj_old);
     }
-    
+   
     samples.col(i) = z;
   }
   
