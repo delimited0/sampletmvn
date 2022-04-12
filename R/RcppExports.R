@@ -9,6 +9,13 @@ lg2015 <- function(n, z, R, Rz, a, b, sampler) {
     .Call(`_sampletmvn_lg2015`, n, z, R, Rz, a, b, sampler)
 }
 
+#' @param R upper cholesky factor of precision
+#' @param lb lower bound with mean subtracted
+#' @param ub upper bound with mean subtracted
+rhmc <- function(n, R, lb, ub, burnin, initial, traj_length, max_stepsize, max_relative_stepsize, implicit_iter) {
+    .Call(`_sampletmvn_rhmc`, n, R, lb, ub, burnin, initial, traj_length, max_stepsize, max_relative_stepsize, implicit_iter)
+}
+
 rsm <- function(n_samples, mode, Sigma, Prec_mode, lb, ub, A) {
     .Call(`_sampletmvn_rsm`, n_samples, mode, Sigma, Prec_mode, lb, ub, A)
 }

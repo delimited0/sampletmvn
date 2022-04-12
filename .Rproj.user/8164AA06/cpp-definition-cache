@@ -1,5 +1,173 @@
 [
     {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+        "file_last_write": 1649710877.0,
+        "definitions": [
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@feasible#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "feasible(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 3,
+                "column": 23
+            },
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@hessian#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "hessian(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 7,
+                "column": 28
+            },
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@tensor#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "tensor(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 14,
+                "column": 28
+            },
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@quadratic_form_gradient#&1$@N@arma@S@Col>#d#&1$@N@arma@S@Mat>#d#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "quadratic_form_gradient(const arma::vec &, const arma::mat &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 20,
+                "column": 28
+            },
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@log_det_gradient#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "log_det_gradient(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 25,
+                "column": 28
+            },
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@stepsize#&1$@N@arma@S@Col>#d#S0_#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "stepsize(const arma::vec &, const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 31,
+                "column": 25
+            },
+            {
+                "usr": "c:@S@TwoSidedBarrier@F@hessian_norm#&1$@N@arma@S@Col>#d#S0_#",
+                "kind": 7,
+                "parent_name": "TwoSidedBarrier",
+                "name": "hessian_norm(const arma::vec &, const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.cpp",
+                "line": 45,
+                "column": 28
+            }
+        ]
+    },
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.h",
+        "file_last_write": 1649710731.0,
+        "definitions": [
+            {
+                "usr": "c:@S@TwoSidedBarrier",
+                "kind": 2,
+                "parent_name": "",
+                "name": "TwoSidedBarrier",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/barrier.h",
+                "line": 6,
+                "column": 7
+            }
+        ]
+    },
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+        "file_last_write": 1649713768.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Hamiltonian@F@H#&1$@N@arma@S@Col>#d#S0_#",
+                "kind": 7,
+                "parent_name": "Hamiltonian",
+                "name": "H(const arma::vec &, const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+                "line": 4,
+                "column": 21
+            },
+            {
+                "usr": "c:@S@Hamiltonian@F@dH#&1$@N@arma@S@Col>#d#S0_#",
+                "kind": 7,
+                "parent_name": "Hamiltonian",
+                "name": "dH(const arma::vec &, const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+                "line": 16,
+                "column": 46
+            },
+            {
+                "usr": "c:@S@Hamiltonian@F@generate#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "Hamiltonian",
+                "name": "generate(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+                "line": 32,
+                "column": 24
+            },
+            {
+                "usr": "c:@S@Hamiltonian@F@stepsize#&1$@N@arma@S@Col>#d#S0_#",
+                "kind": 7,
+                "parent_name": "Hamiltonian",
+                "name": "stepsize(const arma::vec &, const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+                "line": 39,
+                "column": 21
+            },
+            {
+                "usr": "c:@S@PrecHamiltonian@F@f#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "PrecHamiltonian",
+                "name": "f(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+                "line": 47,
+                "column": 25
+            },
+            {
+                "usr": "c:@S@PrecHamiltonian@F@df#&1$@N@arma@S@Col>#d#",
+                "kind": 7,
+                "parent_name": "PrecHamiltonian",
+                "name": "df(const arma::vec &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.cpp",
+                "line": 54,
+                "column": 28
+            }
+        ]
+    },
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.h",
+        "file_last_write": 1649713753.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Hamiltonian",
+                "kind": 2,
+                "parent_name": "",
+                "name": "Hamiltonian",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.h",
+                "line": 6,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@PrecHamiltonian",
+                "kind": 2,
+                "parent_name": "",
+                "name": "PrecHamiltonian",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hamiltonian.h",
+                "line": 22,
+                "column": 7
+            }
+        ]
+    },
+    {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hzz.cpp",
         "file_last_write": 1647994636.0,
         "definitions": [
@@ -30,8 +198,56 @@
         ]
     },
     {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rhmc.cpp",
+        "file_last_write": 1649735757.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Integrator@F@implicit_midpoint#$@N@arma@S@Col>#d#S0_#&$@S@Hamiltonian#",
+                "kind": 7,
+                "parent_name": "Integrator",
+                "name": "implicit_midpoint(arma::vec, arma::vec, Hamiltonian &)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rhmc.cpp",
+                "line": 7,
+                "column": 45
+            },
+            {
+                "usr": "c:@F@rhmc_simulator#I#I#$@N@arma@S@Col>#d#&$@S@Hamiltonian#$@S@Integrator#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rhmc_simulator(int, int, arma::vec, Hamiltonian &, Integrator)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rhmc.cpp",
+                "line": 38,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@rhmc#I#$@N@arma@S@Mat>#d#$@N@arma@S@Col>#d#S1_#I#S1_#d#d#d#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rhmc(int, arma::mat, arma::vec, arma::vec, int, arma::vec, double, double, double, int)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rhmc.cpp",
+                "line": 64,
+                "column": 11
+            }
+        ]
+    },
+    {
+        "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rhmc.h",
+        "file_last_write": 1649730811.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Integrator",
+                "kind": 2,
+                "parent_name": "",
+                "name": "Integrator",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rhmc.h",
+                "line": 6,
+                "column": 7
+            }
+        ]
+    },
+    {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/rsm.cpp",
-        "file_last_write": 1648580836.0,
+        "file_last_write": 1648793075.0,
         "definitions": [
             {
                 "usr": "c:@F@rsm#I#$@N@arma@S@Col>#d#$@N@arma@S@Mat>#d#S0_#S0_#S0_#S1_#",

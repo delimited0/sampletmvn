@@ -46,6 +46,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rhmc
+arma::mat rhmc(int n, arma::mat R, arma::vec lb, arma::vec ub, int burnin, arma::vec initial, double traj_length, double max_stepsize, double max_relative_stepsize, int implicit_iter);
+RcppExport SEXP _sampletmvn_rhmc(SEXP nSEXP, SEXP RSEXP, SEXP lbSEXP, SEXP ubSEXP, SEXP burninSEXP, SEXP initialSEXP, SEXP traj_lengthSEXP, SEXP max_stepsizeSEXP, SEXP max_relative_stepsizeSEXP, SEXP implicit_iterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lb(lbSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ub(ubSEXP);
+    Rcpp::traits::input_parameter< int >::type burnin(burninSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type initial(initialSEXP);
+    Rcpp::traits::input_parameter< double >::type traj_length(traj_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type max_stepsize(max_stepsizeSEXP);
+    Rcpp::traits::input_parameter< double >::type max_relative_stepsize(max_relative_stepsizeSEXP);
+    Rcpp::traits::input_parameter< int >::type implicit_iter(implicit_iterSEXP);
+    rcpp_result_gen = Rcpp::wrap(rhmc(n, R, lb, ub, burnin, initial, traj_length, max_stepsize, max_relative_stepsize, implicit_iter));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rsm
 arma::mat rsm(int n_samples, arma::vec mode, arma::mat Sigma, arma::vec Prec_mode, arma::vec lb, arma::vec ub, arma::mat A);
 RcppExport SEXP _sampletmvn_rsm(SEXP n_samplesSEXP, SEXP modeSEXP, SEXP SigmaSEXP, SEXP Prec_modeSEXP, SEXP lbSEXP, SEXP ubSEXP, SEXP ASEXP) {
@@ -116,6 +136,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_sampletmvn_hamiltonian_zigzag", (DL_FUNC) &_sampletmvn_hamiltonian_zigzag, 8},
     {"_sampletmvn_lg2015", (DL_FUNC) &_sampletmvn_lg2015, 7},
+    {"_sampletmvn_rhmc", (DL_FUNC) &_sampletmvn_rhmc, 10},
     {"_sampletmvn_rsm", (DL_FUNC) &_sampletmvn_rsm, 7},
     {"_sampletmvn_rsm_axis", (DL_FUNC) &_sampletmvn_rsm_axis, 6},
     {"_sampletmvn_ry2004", (DL_FUNC) &_sampletmvn_ry2004, 8},

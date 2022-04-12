@@ -5,17 +5,12 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
   Prec = chol2inv(chol(Sigma))
   
   # find the mode of the truncated normal with quadratic programming
-  if (is.null(A)) {
-    Amat = diag(d)
-  }
-  else {
-    Amat = A
-  }
+  if (is.null(A)) A = diag(d)
   
   # convert constraints to appropriate form for quadprog
   inf_idx = is.infinite(c(lb, ub))
-  Amat = - t(rbind(Amat, -Amat)[!inf_idx, ])
-  bvec = c(lb, -ub)[!inf_idx]
+  Amat = - t(rbind(A, -A)[!inf_idx, ])
+  bvec = c(lb - A %*% mu, -ub + A %*% mu)[!inf_idx]
   dvec = rep(0, d)
   
   opt = quadprog::solve.QP(Prec, dvec, Amat, bvec)
@@ -24,13 +19,13 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
   Prec_mode = Prec %*% map
   
   if (!is.null(A)) {
-    samples = rsm(n, map, Sigma, Prec_mode, lb, ub, A)  
+    samples = rsm(n, map, Sigma, Prec_mode, lb - A %*% mu, ub - A %*% mu, A)  
   }
   else {
-    samples = rsm_axis(n, map, Sigma, Prec_mode, lb, ub)
+    samples = rsm_axis(n, map, Sigma, Prec_mode, lb - A %*% mu, ub - A %*% mu)
   }
   
-  return(t(samples))
+  return(t(samples) + matrix(rep(mu, n), nrow = n, byrow = TRUE))
 }
 
 #' @param n number of random samples desired (sample size).
@@ -147,10 +142,34 @@ sample_gibbs_ry2004 = function(n, mu, Sigma, lb, ub, A = diag(1, length(mu)),
   final.ind <- seq(1, length(final.ind), by=thin+1) + thin + burn
   
   # unstandardize
-  samples <- L %*% samples[, final.ind] + mu
+  samples <- L %*% samples[, final.ind]
   
   return(t(samples))
 }
+
+#' @export
+sample_rhmc =function(n, mu, Sigma, lb, ub, 
+                      initial = NULL, burnin = 0, 
+                      traj_length = 2, max_stepsize = .1,
+                      max_relative_stepsize = .2, implicit_iter = 1) {
+  
+  if (is.null(initial)) {
+    initial = (lb + ub) / 2 - mu
+  }    
+  
+  
+  Prec = chol2inv(chol(Sigma))
+  R = chol(Prec)
+  
+  samples = rhmc(n, R, lb - mu, ub - mu, burnin, initial, 
+                 traj_length, max_stepsize, max_relative_stepsize, implicit_iter)
+  
+  # un-center samples
+  samples = samples + mu
+  
+  return(t(samples))
+}
+                       
 
 #' @export
 sample_hamiltonian_zigzag = function(n, mu, Sigma, lb, ub, A, 
