@@ -2,6 +2,7 @@
 sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
   
   d = length(mu)
+  
   Prec = chol2inv(chol(Sigma))
   
   # find the mode of the truncated normal with quadratic programming
@@ -29,9 +30,9 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
 }
 
 #' @param n number of random samples desired (sample size).
-#' @param Mean mean vector of the underlying multivariate normal distribution.
+#' @param mu mean vector of the underlying multivariate normal distribution.
 #' @param Sigma positive definite covariance matrix of the underlying multivariate normal distribution.
-#' @param D matrix or vector of coefficients of linear inequality constraints.
+#' @param A matrix or vector of coefficients of linear inequality constraints.
 #' @param lower vector of lower bounds for truncation.
 #' @param upper vector of upper bounds for truncation.
 #' @param init initial value vector for Gibbs sampler (satisfying truncation), if \code{NULL} then determine automatically.
@@ -40,11 +41,11 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
 #' 
 #' @export
 sample_gibbs_lg2015 <- 
-  function(n, Mean, Sigma, lower, upper, D = diag(1, length(Mean)),
+  function(n, mu, Sigma, lower, upper, A = diag(length(mu)),
            init=NULL, burn=10, thin=1, tuvn_sampler = "lg2015") {
   
-  if (length(Mean) == 1) {
-    result <- rtuvn(n=n, mean=Mean, sd=c(Sigma), lower=lower, upper=upper)
+  if (length(mu) == 1) {
+    result <- rtuvn(n=n, mean=mu, sd=c(Sigma), lower=lower, upper=upper)
   } 
   else {
     
@@ -53,36 +54,40 @@ sample_gibbs_lg2015 <-
     bound.check <- 0
     
     if (!is.null(init)) {
-      inits_test <- D %*% init
+      # check initial value validity
+      inits_test <- A %*% init
       lower.log <- inits_test >= lower + 1e-8  # small tol for get away from bound
       upper.log <- inits_test <= upper - 1e-8  # small tol for get away from bound
       bound.check <- prod(lower.log * upper.log)
-      if (bound.check == 0) cat("initial is outside or too close from boundary, will be auto-corrected by ginv()!\n")
+      if (bound.check == 0) 
+        cat("initial is outside or too close from boundary, will be auto-corrected by ginv()!\n")
     } else if (bound.check == 0) {
-      D.inv <- MASS::ginv(D)
-      init <- D.inv%*%(lower + upper)/2
+      A.inv <- MASS::ginv(A)
+      init <- A.inv%*%(lower + upper)/2
     }
     
-    if ( any( c(burn, thin, n) %% 1 != 0) )  stop("burn, thin and n must be integer\n")
-    if ( any( c(burn, thin, n -1) < 0) ) stop("burn, thin must be  non-negative interger, n must be positive integer\n")
+    if ( any( c(burn, thin, n) %% 1 != 0) )  
+      stop("burn, thin and n must be integer\n")
+    if ( any( c(burn, thin, n -1) < 0) ) 
+      stop("burn, thin must be  non-negative interger, n must be positive integer\n")
     
-    if (is.vector(D)) {
-      Rtilde <- t(as.matrix(D))
+    if (is.vector(A)) {
+      Rtilde <- t(as.matrix(A))
       lower <- as.vector(lower)
       upper <- as.vector(upper)
     } else {
-      Rtilde <- D
+      Rtilde <- A
     }
     
-    a <- lower - Rtilde%*%Mean
-    b <- upper - Rtilde%*%Mean
+    a <- lower - Rtilde%*%mu
+    b <- upper - Rtilde%*%mu
     Sigma.chol <- t(chol(Sigma))
     R <- Rtilde %*% Sigma.chol
     
     p <- ncol(R) # number of parameters, i.e. length of beta vector
     #   m <- nrow(R) # number of constraints
     
-    z <- solve(Sigma.chol, init - Mean)  # int is the initial value for the original problem
+    z <- solve(Sigma.chol, init - mu)  # int is the initial value for the original problem
     Rz <- R %*% z
     
     # draw standardized samples
@@ -95,7 +100,7 @@ sample_gibbs_lg2015 <-
     final.ind <- seq(1,length(final.ind),by=thin+1) + thin + burn
     
     # unstandardize
-    samples <- Sigma.chol %*% samples[, final.ind] + Mean
+    samples <- Sigma.chol %*% samples[, final.ind] + mu
   }
   
   return(t(samples))
@@ -111,13 +116,13 @@ sample_gibbs_lg2015 <-
 #' @param burn burn-in iterations discarded (default as \code{10}).
 #' @param thin thinning lag (default as \code{1}).
 #' @export
-sample_gibbs_ry2004 = function(n, mu, Sigma, lb, ub, A = diag(1, length(mu)),
+sample_gibbs_ry2004 = function(n, mu, Sigma, lb, ub, A = diag(length(mu)),
                                init = NULL, burn = 10, thin = 1, 
                                tuvn_sampler = "lg2015") {
-
+  
   if (is.null(init)) {
     A_inv <- MASS::ginv(A)
-    init <- D_inv %*% (lb + ub) / 2  
+    init <- A_inv %*% (lb + ub) / 2  
   }
   
   L = t(chol(Sigma))
@@ -175,11 +180,11 @@ sample_rhmc =function(n, mu, Sigma, lb, ub,
 sample_hamiltonian_zigzag = function(n, mu, Sigma, lb, ub, A, 
                                      intg_time, init = NULL, p_init = NULL) {
   d = length(mu)
-  Prec = chol2inv(chol(Sigma))
+    Prec = chol2inv(chol(Sigma))
   
   # p_init = rnorm(d)
   p_init = init
   
-  samples = t(hamiltonian_zigzag(n, Prec, A, lb, ub, init, p_init, intg_time))
+  samples = t(hzz(n, Prec, A, lb, ub, init, intg_time))
   return(samples)
 }

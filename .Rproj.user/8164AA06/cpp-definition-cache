@@ -169,15 +169,24 @@
     },
     {
         "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hzz.cpp",
-        "file_last_write": 1647994636.0,
+        "file_last_write": 1649804240.0,
         "definitions": [
             {
-                "usr": "c:@F@hamiltonian_zigzag#I#$@N@arma@S@Mat>#d#S0_#$@N@arma@S@Col>#d#S1_#S1_#S1_#d#",
+                "usr": "c:@F@zigzag#$@N@arma@S@Col>#d#S0_#&$@N@arma@S@Mat>#d#S1_#&S0_#S3_#d#",
                 "kind": 6,
                 "parent_name": "",
-                "name": "hamiltonian_zigzag(int, arma::mat, arma::mat, arma::vec, arma::vec, arma::vec, arma::vec, double)",
+                "name": "zigzag(arma::vec, arma::vec, arma::mat &, arma::mat &, arma::vec &, arma::vec &, double)",
                 "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hzz.cpp",
-                "line": 5,
+                "line": 4,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@hzz#I#$@N@arma@S@Mat>#d#S0_#$@N@arma@S@Col>#d#S1_#S1_#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "hzz(int, arma::mat, arma::mat, arma::vec, arma::vec, arma::vec, double)",
+                "file": "/home/patrick/Research/mvn_region/sampletmvn/src/hzz.cpp",
+                "line": 91,
                 "column": 11
             }
         ]

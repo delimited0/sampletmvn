@@ -11,9 +11,9 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// hamiltonian_zigzag
-arma::mat hamiltonian_zigzag(int n, arma::mat Prec, arma::mat A, arma::vec lb, arma::vec ub, arma::vec init, arma::vec p_init, double T);
-RcppExport SEXP _sampletmvn_hamiltonian_zigzag(SEXP nSEXP, SEXP PrecSEXP, SEXP ASEXP, SEXP lbSEXP, SEXP ubSEXP, SEXP initSEXP, SEXP p_initSEXP, SEXP TSEXP) {
+// hzz
+arma::mat hzz(int n, arma::mat Prec, arma::mat A, arma::vec lb, arma::vec ub, arma::vec init, double T);
+RcppExport SEXP _sampletmvn_hzz(SEXP nSEXP, SEXP PrecSEXP, SEXP ASEXP, SEXP lbSEXP, SEXP ubSEXP, SEXP initSEXP, SEXP TSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,9 +23,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type lb(lbSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type ub(ubSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type init(initSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type p_init(p_initSEXP);
     Rcpp::traits::input_parameter< double >::type T(TSEXP);
-    rcpp_result_gen = Rcpp::wrap(hamiltonian_zigzag(n, Prec, A, lb, ub, init, p_init, T));
+    rcpp_result_gen = Rcpp::wrap(hzz(n, Prec, A, lb, ub, init, T));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -134,7 +133,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_sampletmvn_hamiltonian_zigzag", (DL_FUNC) &_sampletmvn_hamiltonian_zigzag, 8},
+    {"_sampletmvn_hzz", (DL_FUNC) &_sampletmvn_hzz, 7},
     {"_sampletmvn_lg2015", (DL_FUNC) &_sampletmvn_lg2015, 7},
     {"_sampletmvn_rhmc", (DL_FUNC) &_sampletmvn_rhmc, 10},
     {"_sampletmvn_rsm", (DL_FUNC) &_sampletmvn_rsm, 7},
