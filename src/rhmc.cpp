@@ -12,7 +12,7 @@ std::pair<arma::vec, arma::vec> Integrator::implicit_midpoint(arma::vec x, arma:
   arma::vec dv = dz.second;
   
   while (total_h < .9 * this->traj_length) {
-    
+  
     double h = 
       std::min(
         std::min(this->max_relative_stepsize * ham.stepsize(x, dx),

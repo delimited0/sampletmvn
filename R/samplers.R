@@ -42,7 +42,7 @@ sample_rsm = function(n, mu, Sigma, lb, ub, A = NULL) {
 #' @export
 sample_gibbs_lg2015 <- 
   function(n, mu, Sigma, lower, upper, A = diag(length(mu)),
-           init=NULL, burn=10, thin=1, tuvn_sampler = "lg2015") {
+           init=NULL, burn=10, thin=0, tuvn_sampler = "lg2015") {
   
   if (length(mu) == 1) {
     result <- rtuvn(n=n, mean=mu, sd=c(Sigma), lower=lower, upper=upper)
@@ -100,7 +100,9 @@ sample_gibbs_lg2015 <-
     final.ind <- seq(1,length(final.ind),by=thin+1) + thin + burn
     
     # unstandardize
-    samples <- Sigma.chol %*% samples[, final.ind] + mu
+    samples <- 
+      Sigma.chol %*% samples[, final.ind, drop = FALSE] + 
+      matrix(rep(mu, n), ncol = n, byrow = TRUE)
   }
   
   return(t(samples))
@@ -117,7 +119,7 @@ sample_gibbs_lg2015 <-
 #' @param thin thinning lag (default as \code{1}).
 #' @export
 sample_gibbs_ry2004 = function(n, mu, Sigma, lb, ub, A = diag(length(mu)),
-                               init = NULL, burn = 10, thin = 1, 
+                               init = NULL, burn = 10, thin = 0, 
                                tuvn_sampler = "lg2015") {
   
   if (is.null(init)) {
@@ -147,26 +149,25 @@ sample_gibbs_ry2004 = function(n, mu, Sigma, lb, ub, A = diag(length(mu)),
   final.ind <- seq(1, length(final.ind), by=thin+1) + thin + burn
   
   # unstandardize
-  samples <- L %*% samples[, final.ind]
+  samples <- L %*% samples[, final.ind, drop = FALSE]
   
   return(t(samples))
 }
 
 #' @export
-sample_rhmc =function(n, mu, Sigma, lb, ub, 
-                      initial = NULL, burnin = 0, 
-                      traj_length = 2, max_stepsize = .1,
-                      max_relative_stepsize = .2, implicit_iter = 1) {
+sample_rhmc = function(n, mu, Sigma, lb, ub, 
+                       initial = NULL, burnin = 0, 
+                       traj_length = 2, max_stepsize = .1,
+                       max_relative_stepsize = .2, implicit_iter = 1) {
   
   if (is.null(initial)) {
     initial = (lb + ub) / 2 - mu
   }    
   
-  
   Prec = chol2inv(chol(Sigma))
   R = chol(Prec)
   
-  samples = rhmc(n, R, lb - mu, ub - mu, burnin, initial, 
+  samples = rhmc(n, R, lb - mu, ub - mu, burnin, initial - mu, 
                  traj_length, max_stepsize, max_relative_stepsize, implicit_iter)
   
   # un-center samples

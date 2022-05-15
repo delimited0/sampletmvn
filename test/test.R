@@ -34,7 +34,7 @@ plot(epess_samples, main = "EPESS", pch = "+")
 met_samples = met::mvrandn(lb, ub, Sigma, n, mu)
 plot(t(met_samples), main = "MET", pch = "+")
 
-rhmc_samples = sampletmvn::sample_rhmc(n, mu, Sigma, lb, ub, initial = c(0, 0))
+rhmc_samples = sampletmvn::sample_rhmc(n, mu, Sigma, lb, ub, initial = c(1, 1))
 plot(rhmc_samples, main = "RHMC", pch = "+")
 
 ghk_samples = tmvnsim::tmvnsim(n, d, lower = lb, upper = ub, means = mu, sigma = Sigma)
@@ -74,13 +74,13 @@ plot(ry2004_samples, main = "RY2004")
 liness_samples = lincongauss::rtmvn(n, mu, Sigma, lb, ub, x_init = c(1, 1))
 plot(liness_samples, main = "LINESS")
 
-epess_samples = epmgpr::rtmvn(n, mu, Sigma, lb, ub, initial = c(1, 1), J = 1)
+epess_samples = epmgpr::rtmvn(n, mu, Sigma, lb, ub, initial = c(1, 1))
 plot(epess_samples, main = "EPESS")
 
 met_samples = met::mvrandn(lb, ub, Sigma, n, mu)
 plot(t(met_samples), main = "MET")
 
-rhmc_samples = sampletmvn::sample_rhmc(n, mu, Sigma, lb, ub, initial = c(1, 1))
+rhmc_samples = sampletmvn::sample_rhmc(n, mu, Sigma, lb, ub, initial = c(.1, .1))
 plot(rhmc_samples, main = "RHMC")
 
 hzz_samples = sampletmvn::sample_hamiltonian_zigzag(1, mu, Sigma, lb, ub, A, 
@@ -126,7 +126,48 @@ liness_samples = lincongauss::rtmvn(n, mu, Sigma, lb, ub, A = A,
                                     x_init = c(1, 1))
 plot(liness_samples, main = "LINESS")
 
-epess_samples = epmgpr::rtmvn(n, mu, Sigma, lb, ub, A = A, initial = c(1, 1), J = 1)
+epess_samples = epmgpr::rtmvn(n, mu, Sigma, lb, ub, A = A, initial = c(1, 1))
 plot(epess_samples, main = "EPESS")
+
+
+# Multinomial probit test -------------------------------------------------
+
+max_polytope = function(y) {
+  n = length(y)
+  idx = which(y == 1)
+  
+  D = -1*diag(n-1)
+  if (idx == 1)
+    A = cbind(1, D)
+  else if (idx == n)
+    A = cbind(D, 1)
+  else
+    A = cbind(D[, 1:(idx-1)], rep(1, n-1), D[, idx:(n-1)])
+  
+  return(A)
+}
+
+y = c(0, 1, 0)
+A = max_polytope(y)
+
+lb = rep(0, 2)
+ub = rep(Inf, 2)
+
+n = 1000
+
+mu = rep(0, 3)
+Sigma = diag(3)
+
+samples = sampletmvn::sample_gibbs_lg2015(n, mu, Sigma, lb, ub, A, tuvn_sampler = "lg2015", 
+                                          init = 2 * y - 1)
+
+sum(apply(samples, 1, function(s) {
+  As = A %*% s 
+  As <= ub & As >= lb
+}))
+
+
+
+
 
 
